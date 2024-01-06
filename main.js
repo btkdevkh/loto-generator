@@ -3,6 +3,7 @@ const grillNumsEl = document.querySelector(".grill-1-50")
 const startNumsEl = document.querySelector(".grill-1-12")
 const generateBtnEl = document.querySelector(".generate-btn")
 const resultEl = document.querySelector(".result")
+const timerEl = document.querySelector(".timer")
 
 // Data
 let nums = []
@@ -81,6 +82,31 @@ const generateLottery = () => {
   })
 }
 
+const getTimer = (min) => {
+  let m = min
+  let s = 60
+
+  timerEl.textContent = `${m < 10 ? `0${m}` : m} : ${s < 10 ? `0${s}` : s}`
+
+  const interval = setInterval(() => {
+    s--
+
+    if (s === 0) {
+      s = 60
+      m--
+
+      if (m === 0) {
+        clearInterval(interval)
+
+        m = 0
+        s = 0
+      }
+    }
+
+    timerEl.textContent = `${m < 10 ? `0${m}` : m} : ${s < 10 ? `0${s}` : s}`
+  }, 1000)
+}
+
 // Events
 createHTMLElementNumber(50, "num", grillNumsEl)
 createHTMLElementNumber(12, "star-num", startNumsEl)
@@ -89,6 +115,7 @@ generateBtnEl.addEventListener("click", () => {
   resultEl.style.padding = ""
 
   generateLottery()
+  getTimer(12)
 
   const timer = setInterval(() => {
     generateLottery()
@@ -125,5 +152,5 @@ generateBtnEl.addEventListener("click", () => {
 
         resultEl.append(div)
       })
-  }, 12000)
+  }, 720000)
 })
