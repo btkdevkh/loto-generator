@@ -75,7 +75,7 @@ const generateLottery = () => {
   Array.from(startNumsEl.children).forEach((child) => {
     if (starNums.includes(Number(child.textContent))) {
       child.style.transition = "all .3s"
-      child.style.backgroundColor = "orangered"
+      child.style.backgroundColor = "crimson"
     } else {
       child.style.backgroundColor = ""
     }
@@ -86,25 +86,42 @@ const getTimer = (min) => {
   let m = min
   let s = 60
 
-  timerEl.textContent = `${m < 10 ? `0${m}` : m} : ${s < 10 ? `0${s}` : s}`
+  timerEl.textContent = `00:${m < 10 ? `0${m}` : m}:${s < 10 ? `0${s}` : s}`
+
+  m--
 
   const interval = setInterval(() => {
     s--
 
     if (s === 0) {
-      s = 60
       m--
+      s = 60
 
-      if (m === 0) {
+      if (m === -1) {
         clearInterval(interval)
+        resetFlashBtn(false)
 
         m = 0
         s = 0
       }
     }
 
-    timerEl.textContent = `${m < 10 ? `0${m}` : m} : ${s < 10 ? `0${s}` : s}`
+    timerEl.textContent = `00:${m < 10 ? `0${m}` : m}:${s < 10 ? `0${s}` : s}`
   }, 1000)
+}
+
+const resetFlashBtn = (disabled) => {
+  if (disabled) {
+    generateBtnEl.textContent = "FLASHING..."
+    generateBtnEl.style.cursor = "not-allowed"
+    generateBtnEl.disabled = disabled
+
+    return
+  }
+
+  generateBtnEl.textContent = "FLASH"
+  generateBtnEl.style.cursor = "pointer"
+  generateBtnEl.disabled = false
 }
 
 // Events
@@ -114,8 +131,11 @@ generateBtnEl.addEventListener("click", () => {
   resultEl.innerHTML = ""
   resultEl.style.padding = ""
 
+  const min = 12
+
   generateLottery()
-  getTimer(12)
+  getTimer(min)
+  resetFlashBtn(true)
 
   const timer = setInterval(() => {
     generateLottery()
@@ -147,10 +167,10 @@ generateBtnEl.addEventListener("click", () => {
       .forEach((num) => {
         const div = document.createElement("div")
         div.classList.add("result-flash")
-        div.style.backgroundColor = "orangered"
+        div.style.backgroundColor = "crimson"
         div.textContent = num
 
         resultEl.append(div)
       })
-  }, 720000)
+  }, new Date(min).setMinutes(min))
 })
